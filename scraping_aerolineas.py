@@ -14,11 +14,17 @@ driver = webdriver.Chrome(service=service)
 
 url = "https://www.aerolineas.com.ar/"
 
-driver.get(url)
+
+
+
+
+def abrir_pagina():
+    driver.get(url)
+
+
 
 def realizar_busqueda(origen, destino):
-    primer_dia_disponible = []
-    precios = []
+    primer_dia_disponible = None
 
     input_tramo_ida = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "radio-sbf-from")))
     input_origen = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "suggestion-input-sb-origin")))
@@ -66,6 +72,21 @@ def realizar_busqueda(origen, destino):
 
     button_buscar.click()
 
-    time.sleep(15)
+    
 
-realizar_busqueda("BUE", "BRC")
+def obtener_precios():
+    precios = []
+
+    ofertas = WebDriverWait(driver, 5).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day"))) 
+
+    for oferta in ofertas:
+        print(oferta.find_element(By.ID, "fdc-button-price").text)
+
+
+
+def scraping_aerolineas(origen, destino):
+    abrir_pagina()
+    realizar_busqueda(origen, destino)
+    obtener_precios()
+
+scraping_aerolineas("BUE", "BRC")
