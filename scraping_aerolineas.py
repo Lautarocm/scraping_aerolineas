@@ -16,24 +16,56 @@ url = "https://www.aerolineas.com.ar/"
 
 driver.get(url)
 
-def get_search_inputs():
-    available_days = []
+def realizar_busqueda(origen, destino):
+    primer_dia_disponible = []
+    precios = []
+
     input_tramo_ida = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "radio-sbf-from")))
     input_origen = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "suggestion-input-sb-origin")))
     input_destino = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "suggestion-input-sb-destination")))
-    time.sleep(3)
+    button_buscar = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "button-search-flights")))
+
     input_tramo_ida.click()
-    time.sleep(3)
-    input_fecha = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
 
-    input_fecha.click()
-    date_picker = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, "DayPicker-Body")))
-    days = date_picker.find_elements(By.CLASS_NAME, "DayPicker-Day")
+    input_origen.send_keys(origen)
+
+    time.sleep(2)
+
+    opciones_origen = driver.find_elements(By.TAG_NAME, "li")
+
+    for opcion in opciones_origen:
+        if origen in opcion.text:
+            opcion.click()
+            break
     
-    for day in days:    #obtengo dias disponibles
-        if day.get_attribute("aria-disabled") == "false":
-            available_days.append(day)
+    input_destino.send_keys(destino)
+
+    time.sleep(2)
+
+    opciones_destino = driver.find_elements(By.TAG_NAME, "li")
+
+    for opcion in opciones_destino:
+        if destino in opcion.text:
+            opcion.click()
+            break
+    
+    input_fecha = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
+    input_fecha.click()
+
+    date_picker = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, "DayPicker-Body")))
+    dias = date_picker.find_elements(By.CLASS_NAME, "DayPicker-Day")
+    
+    for dia in dias:    #obtengo dias disponibles
+        if dia.get_attribute("aria-disabled") == "false":
+            primer_dia_disponible = dia
+            break
+
+    primer_dia_disponible.click()
 
     time.sleep(3)
 
-get_search_inputs()
+    button_buscar.click()
+
+    time.sleep(15)
+
+realizar_busqueda("BUE", "BRC")
