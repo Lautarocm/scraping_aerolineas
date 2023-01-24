@@ -4,10 +4,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 import time
 from bs4 import BeautifulSoup
 
-
+# INICIALIZANCO WEBDRIVER
 service = Service(executable_path=ChromeDriverManager().install())
 
 driver = webdriver.Chrome(service=service)
@@ -16,6 +17,7 @@ url = "https://www.aerolineas.com.ar/"
 
 
 
+cantidad_meses_disponibles = 1
 precios = []
 
 
@@ -23,6 +25,22 @@ precios = []
 def abrir_pagina():
     driver.get(url)
 
+
+
+def calcular_meses_disponibles(input_fecha):
+    global cantidad_meses_disponibles
+
+    input_fecha.click()
+
+    mes = driver.find_element(By.CLASS_NAME, "DayPicker-Caption").text.split()[0]
+
+    while mes != "DICIEMBRE":
+        flecha_siguiente = driver.find_element(By.ID, "next-button")
+        flecha_siguiente.click()
+        mes = driver.find_element(By.CLASS_NAME, "DayPicker-Caption").text.split()[0]
+        time.sleep(0.5)
+        cantidad_meses_disponibles += 1
+    print(cantidad_meses_disponibles)
 
 
 def realizar_busqueda(origen, destino):
@@ -60,6 +78,8 @@ def realizar_busqueda(origen, destino):
     input_fecha = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
     input_fecha.click()
 
+    calcular_meses_disponibles(input_fecha)
+
     date_picker = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, "DayPicker-Body")))
     dias = date_picker.find_elements(By.CLASS_NAME, "DayPicker-Day")
     
@@ -86,10 +106,16 @@ def obtener_precios():
 
 
 
+def editar_busqueda():
+    button_editar_busqueda = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
+    button_editar_busqueda.click()
+
+
+
+
 def scraping_aerolineas(origen, destino):
     abrir_pagina()
     realizar_busqueda(origen, destino)
     obtener_precios()
-    print(precios)
 
 scraping_aerolineas("BUE", "BRC")
