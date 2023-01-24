@@ -16,6 +16,8 @@ url = "https://www.aerolineas.com.ar/"
 
 
 
+precios = []
+
 
 
 def abrir_pagina():
@@ -75,12 +77,12 @@ def realizar_busqueda(origen, destino):
     
 
 def obtener_precios():
-    precios = []
+    global precios
 
     ofertas = WebDriverWait(driver, 5).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day"))) 
 
     for oferta in ofertas:
-        print(oferta.find_element(By.ID, "fdc-button-price").text)
+        precios.append(int(oferta.find_element(By.ID, "fdc-button-price").text))
 
 
 
@@ -88,5 +90,6 @@ def scraping_aerolineas(origen, destino):
     abrir_pagina()
     realizar_busqueda(origen, destino)
     obtener_precios()
+    print(precios)
 
 scraping_aerolineas("BUE", "BRC")
