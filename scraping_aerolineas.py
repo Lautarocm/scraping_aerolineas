@@ -103,11 +103,13 @@ def reiniciar_calendario():
 
 def obtener_precios():
     global precios
-    ofertas = driver.find_elements(By.ID, "fdc-available-day") 
-    for oferta in ofertas:
-        precios.append(int(oferta.find_element(By.ID, "fdc-button-price").text))
-    print(precios)
-    time.sleep(1)
+    try:
+        ofertas = WebDriverWait(driver, 5).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day")))
+        for oferta in ofertas:
+            precios.append(int(oferta.find_element(By.ID, "fdc-button-price").text))
+        time.sleep(1)
+    except:
+        pass
 
 
 
@@ -152,6 +154,6 @@ def scraping_aerolineas(origen, destino):
     click_buscar()
     obtener_precios()
     buscar_resto_del_anio()
-    print(precios)
+    print(sorted(precios))
 
 scraping_aerolineas("BUE", "BRC")
