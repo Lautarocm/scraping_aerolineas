@@ -36,13 +36,13 @@ def abrir_pagina():
 
 
 def setear_tramo_ida():
-    input_tramo_ida = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "radio-sbf-from")))
+    input_tramo_ida = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "radio-sbf-from")))
     input_tramo_ida.click()
 
 
 
 def setear_aeropuertos(aeropuerto, input_id):
-    input_aeropuerto = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, input_id)))
+    input_aeropuerto = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, input_id)))
     input_aeropuerto.send_keys(aeropuerto)
     time.sleep(1)
     opciones_origen = driver.find_elements(By.TAG_NAME, "li")
@@ -54,13 +54,13 @@ def setear_aeropuertos(aeropuerto, input_id):
 
 
 def abrir_calendario():
-    input_fecha = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
+    input_fecha = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
     input_fecha.click()
 
 
 
 def setear_fecha():
-    date_picker = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, "DayPicker-Body")))
+    date_picker = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "DayPicker-Body")))
     dias = date_picker.find_elements(By.CLASS_NAME, "DayPicker-Day")
     for dia in dias:    #click en primer dia disponible del mes
             if dia.get_attribute("aria-disabled") == "false":
@@ -71,7 +71,7 @@ def setear_fecha():
 
 
 def click_buscar():
-    button_buscar = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "button-search-flights")))
+    button_buscar = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "button-search-flights")))
     button_buscar.click()
 
 
@@ -79,7 +79,7 @@ def click_buscar():
 def calcular_meses_disponibles():
     global cantidad_meses_disponibles
 
-    input_fecha = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
+    input_fecha = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
     input_fecha.click()
 
     mes = driver.find_element(By.CLASS_NAME, "DayPicker-Caption").text.split()[0]
@@ -104,7 +104,7 @@ def reiniciar_calendario():
 def obtener_precios():
     global precios
     try:
-        ofertas = WebDriverWait(driver, 5).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day")))
+        ofertas = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day")))
         for oferta in ofertas:
             precios.append(int(oferta.find_element(By.ID, "fdc-button-price").text))
         time.sleep(1)
@@ -114,7 +114,7 @@ def obtener_precios():
 
 
 def abrir_editar_busqueda():
-    button_editar_busqueda = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
+    button_editar_busqueda = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
     button_editar_busqueda.click()
     time.sleep(1)
 
