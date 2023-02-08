@@ -26,6 +26,7 @@ url = "https://www.aerolineas.com.ar/"
 
 
 cantidad_meses_disponibles = 0
+
 precios = []
 
 
@@ -64,6 +65,7 @@ def setear_fecha():
     dias = date_picker.find_elements(By.CLASS_NAME, "DayPicker-Day")
     for dia in dias:    #click en primer dia disponible del mes
             if dia.get_attribute("aria-disabled") == "false":
+                time.sleep(1)
                 dia.click()
                 break
     time.sleep(1)
@@ -105,10 +107,20 @@ def obtener_precios():
     global precios
     try:
         ofertas = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day")))
+        mes = driver.find_element(By.ID, "fdc-month").text
         for oferta in ofertas:
-            precios.append(int(oferta.find_element(By.ID, "fdc-button-price").text))
+            dia = oferta.find_element(By.ID, "fdc-button-day").text
+            
+            precio = int(oferta.find_element(By.ID, "fdc-button-price").text)
+            obj_oferta = {
+                "dia": dia,
+                "mes": mes,
+                "precio": precio
+            }
+            precios.append(obj_oferta)
         time.sleep(1)
     except:
+        print("nada")
         pass
 
 
@@ -154,6 +166,7 @@ def scraping_aerolineas(origen, destino):
     click_buscar()
     obtener_precios()
     buscar_resto_del_anio()
-    print(sorted(precios))
+    precios_ordenados = sorted(precios, key=lambda d: d['precio'])
+    print(precios_ordenados)
 
-scraping_aerolineas("BUE", "BRC")
+scraping_aerolineas("BUE", "BCN")
