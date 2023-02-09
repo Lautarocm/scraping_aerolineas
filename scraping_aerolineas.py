@@ -11,15 +11,12 @@ from bs4 import BeautifulSoup
 # INICIALIZANCO WEBDRIVER
 option = webdriver.ChromeOptions()
 
-option.add_argument("--profile-directory=Default")
-option.add_argument("--user-data-dir=C:/Users/USUARIO/AppData/Local/Google/Chrome/User Data")
-option.add_argument('--disable-blink-features=AutomationControlled')
-option.add_argument("window-size=1920,1000")
-option.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
+option.add_argument("window-size=1100,1080")
+# option.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
 
 service = Service(executable_path=ChromeDriverManager().install())
 
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome(service=service, options=option)
 
 url = "https://www.aerolineas.com.ar/"
 
@@ -46,7 +43,7 @@ def setear_aeropuertos(aeropuerto, input_id):
     input_aeropuerto = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, input_id)))
     input_aeropuerto.send_keys(aeropuerto)
     time.sleep(1)
-    opciones_origen = driver.find_elements(By.TAG_NAME, "li")
+    opciones_origen = WebDriverWait(driver, 5).until(EC.presence_of_all_elements_located((By.TAG_NAME, "li")))
     for opcion in opciones_origen:
         if aeropuerto in opcion.text:
             opcion.click()
@@ -61,14 +58,11 @@ def abrir_calendario():
 
 
 def setear_fecha():
-    date_picker = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "DayPicker-Body")))
-    dias = date_picker.find_elements(By.CLASS_NAME, "DayPicker-Day")
+    dias = WebDriverWait(driver, 5).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "DayPicker-Day")))
     for dia in dias:    #click en primer dia disponible del mes
             if dia.get_attribute("aria-disabled") == "false":
-                time.sleep(1)
                 dia.click()
                 break
-    time.sleep(1)
 
 
 
@@ -84,14 +78,18 @@ def calcular_meses_disponibles():
     input_fecha = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "input-from-date-1")))
     input_fecha.click()
 
+    meses_contados = []
+
     mes = driver.find_element(By.CLASS_NAME, "DayPicker-Caption").text.split()[0]
 
-    while mes != "DICIEMBRE":
+    while mes not in meses_contados:
+        meses_contados.append(mes)
         flecha_siguiente = driver.find_element(By.ID, "next-button")
         flecha_siguiente.click()
         mes = driver.find_element(By.CLASS_NAME, "DayPicker-Caption").text.split()[0]
-        time.sleep(0.5)
-        cantidad_meses_disponibles += 1
+    
+    cantidad_meses_disponibles = len(meses_contados)
+    print(meses_contados)
 
 
 
@@ -108,6 +106,7 @@ def obtener_precios():
     try:
         ofertas = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day")))
         mes = driver.find_element(By.ID, "fdc-month").text
+        anio = driver.find_element(By.ID, "header-title").text.split()[4]
         for oferta in ofertas:
             dia = oferta.find_element(By.ID, "fdc-button-day").text
             
@@ -115,10 +114,10 @@ def obtener_precios():
             obj_oferta = {
                 "dia": dia,
                 "mes": mes,
+                "anio": anio,
                 "precio": precio
             }
             precios.append(obj_oferta)
-        time.sleep(1)
     except:
         print("nada")
         pass
@@ -135,7 +134,6 @@ def abrir_editar_busqueda():
 def elegir_siguiente_mes():
     flecha_siguiente = driver.find_element(By.ID, "next-button")
     flecha_siguiente.click()
-    time.sleep(1)
 
 
 
@@ -167,6 +165,6 @@ def scraping_aerolineas(origen, destino):
     obtener_precios()
     buscar_resto_del_anio()
     precios_ordenados = sorted(precios, key=lambda d: d['precio'])
-    print(precios_ordenados)
+    print(*precios_ordenados, sep = "\n")
 
 scraping_aerolineas("BUE", "BCN")
