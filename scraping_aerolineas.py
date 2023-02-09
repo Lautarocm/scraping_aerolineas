@@ -104,7 +104,7 @@ def reiniciar_calendario():
 def obtener_precios():
     global precios
     try:
-        ofertas = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day")))
+        ofertas = WebDriverWait(driver, 3).until(EC.presence_of_all_elements_located((By.ID, "fdc-available-day")))
         mes = driver.find_element(By.ID, "fdc-month").text
         anio = driver.find_element(By.ID, "header-title").text.split()[4]
         for oferta in ofertas:
@@ -126,7 +126,7 @@ def obtener_precios():
 
 def abrir_editar_busqueda():
     try:
-        button_editar_busqueda = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
+        button_editar_busqueda = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
         button_editar_busqueda.click()
         time.sleep(1)
     except:
