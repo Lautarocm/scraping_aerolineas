@@ -119,15 +119,19 @@ def obtener_precios():
             }
             precios.append(obj_oferta)
     except:
-        print("nada")
+        print(f"no hay vuelos disponibles")
         pass
 
 
 
 def abrir_editar_busqueda():
-    button_editar_busqueda = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
-    button_editar_busqueda.click()
-    time.sleep(1)
+    try:
+        button_editar_busqueda = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
+        button_editar_busqueda.click()
+        time.sleep(1)
+    except:
+        pass
+
 
 
 
@@ -167,4 +171,4 @@ def scraping_aerolineas(origen, destino):
     precios_ordenados = sorted(precios, key=lambda d: d['precio'])
     print(*precios_ordenados, sep = "\n")
 
-scraping_aerolineas("BUE", "BCN")
+scraping_aerolineas("BUE", "MDZ")
