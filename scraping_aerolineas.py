@@ -19,7 +19,7 @@ driver = webdriver.Chrome(service=service, options=option)
 url = "https://www.aerolineas.com.ar/"
 
 
-# destinos_arg = [
+# destinos_argentina = [
 #     {"lugar": "San Martín de los Andes" , "codigo": "CPC"},
 #     {"lugar": "Bahía Blanca" , "codigo": "BHI"},
 #     {"lugar": "Bariloche" , "codigo": "BRC"},
@@ -62,26 +62,48 @@ url = "https://www.aerolineas.com.ar/"
 #     {"lugar": "Viedma" , "codigo": "VDM"}
 #     ]
 
-destinos_arg = [
+destinos_argentina = [
     {"lugar": "San Martín de los Andes" , "codigo": "CPC"},
     {"lugar": "Bariloche" , "codigo": "BRC"},
     {"lugar": "Calafate" , "codigo": "FTE"},
-    {"lugar": "Córdoba" , "codigo": "COR"},
+    {"lugar": "Cordoba" , "codigo": "COR"},
     {"lugar": "Esquel" , "codigo": "EQS"},
     {"lugar": "Rio Gallegos" , "codigo": "RGL"},
     {"lugar": "Rio Grande" , "codigo": "RGA"},
     {"lugar": "Rio Hondo" , "codigo": "RHD"},
-    {"lugar": "Puerto Iguazú" , "codigo": "IGR"},
+    {"lugar": "Puerto Iguazu" , "codigo": "IGR"},
     {"lugar": "Puerto Madryn" , "codigo": "PMY"},
     {"lugar": "Malargue" , "codigo": "LGS"},
     {"lugar": "Mendoza" , "codigo": "MDZ"},
-    {"lugar": "Neuquén" , "codigo": "NQN"},
+    {"lugar": "Neuquen" , "codigo": "NQN"},
     {"lugar": "Posadas" , "codigo": "PSS"},
     {"lugar": "San Rafael" , "codigo": "AFA"},
     {"lugar": "Trelew" , "codigo": "REL"},
     {"lugar": "Ushuaia" , "codigo": "USH"},
     {"lugar": "Viedma" , "codigo": "VDM"}
     ]
+
+destinos_españa = [
+    {"lugar": "Alicante", "codigo": "ALC"},
+    {"lugar": "Asturias", "codigo": "OVD"},
+    {"lugar": "Barcelona", "codigo": "BCN"},
+    {"lugar": "Bilbao", "codigo": "BIO"},
+    {"lugar": "Canarias", "codigo": "LPA"},
+    {"lugar": "Coruna", "codigo": "LCG"},
+    {"lugar": "Mallorca", "codigo": "PMI"},
+    {"lugar": "Fuerteventura", "codigo": "FUE"},
+    {"lugar": "Ibiza", "codigo": "IBZ"},
+    {"lugar": "Lanzarote", "codigo": "ACE"},
+    {"lugar": "Madrid", "codigo": "MAD"},
+    {"lugar": "Mahon", "codigo": "MAH"},
+    {"lugar": "Malaga", "codigo": "AGP"},
+    {"lugar": "Sevilla", "codigo": "SVQ"},
+    {"lugar": "Tenerife sur", "codigo": "TFS"},
+    {"lugar": "Tenerife 2", "codigo": "TFN"},
+    {"lugar": "Tenerife 3", "codigo": "TCI"},
+    {"lugar": "Valencia", "codigo": "VLC"},
+    {"lugar": "Vigo", "codigo": "VGO"}
+]
 
 cantidad_meses_disponibles = 0
 
@@ -258,9 +280,9 @@ def scraping_aerolineas(aeropuerto_origen, aeropuerto_destino, destino):
     obtener_precios(destino)
     buscar_resto_del_anio(destino)
 
-for destino in destinos_arg:
+for destino in destinos_españa:
     scraping_aerolineas("BUE", destino["codigo"], destino["lugar"])
 
-# scraping_aerolineas("BUE", "BRC", "Bariloche")
+# scraping_aerolineas("BUE", "IGR", "Iguazu")
 
 guardar_vuelos()
