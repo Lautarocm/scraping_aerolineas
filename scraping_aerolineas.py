@@ -4,7 +4,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
+import time
+from destinos import destinos_argentina_filtrados
 
 # INICIALIZANCO WEBDRIVER
 option = webdriver.ChromeOptions()
@@ -19,94 +20,15 @@ driver = webdriver.Chrome(service=service, options=option)
 url = "https://www.aerolineas.com.ar/"
 
 
-# destinos_argentina = [
-#     {"lugar": "San Martín de los Andes" , "codigo": "CPC"},
-#     {"lugar": "Bahía Blanca" , "codigo": "BHI"},
-#     {"lugar": "Bariloche" , "codigo": "BRC"},
-#     {"lugar": "Calafate" , "codigo": "FTE"},
-#     {"lugar": "Catamarca" , "codigo": "CTC"},
-#     {"lugar": "Comodoro Rivadavia" , "codigo": "CRD"},
-#     {"lugar": "Corrientes" , "codigo": "CNQ"},
-#     {"lugar": "Rio Cuarto" , "codigo": "RCU"},
-#     {"lugar": "Córdoba" , "codigo": "COR"},
-#     {"lugar": "Santiago del Estero" , "codigo": "SDE"},
-#     {"lugar": "Mar del Plata" , "codigo": "MDQ"},
-#     {"lugar": "Esquel" , "codigo": "EQS"},
-#     {"lugar": "Santa fe" , "codigo": "SFN"},
-#     {"lugar": "Formosa" , "codigo": "FMA"},
-#     {"lugar": "Rio Gallegos" , "codigo": "RGL"},
-#     {"lugar": "Villa Gesell" , "codigo": "VLG"},
-#     {"lugar": "Rio Grande" , "codigo": "RGA"},
-#     {"lugar": "Rio Hondo" , "codigo": "RHD"},
-#     {"lugar": "Puerto Iguazú" , "codigo": "IGR"},
-#     {"lugar": "San Juan" , "codigo": "UAQ"},
-#     {"lugar": "Jujuy" , "codigo": "JUJ"},
-#     {"lugar": "La Rioja" , "codigo": "IRJ"},
-#     {"lugar": "San Luis" , "codigo": "LUQ"},
-#     {"lugar": "Puerto Madryn" , "codigo": "PMY"},
-#     {"lugar": "Malargue" , "codigo": "LGS"},
-#     {"lugar": "Mendoza" , "codigo": "MDZ"},
-#     {"lugar": "Villa Mercedes" , "codigo": "VME"},
-#     {"lugar": "Merlo" , "codigo": "RLO"},
-#     {"lugar": "Neuquén" , "codigo": "NQN"},
-#     {"lugar": "Paraná" , "codigo": "PRA"},
-#     {"lugar": "Posadas" , "codigo": "PSS"},
-#     {"lugar": "San Rafael" , "codigo": "AFA"},
-#     {"lugar": "Resistencia" , "codigo": "RES"},
-#     {"lugar": "Santa Rosa" , "codigo": "RSA"},
-#     {"lugar": "Rosario" , "codigo": "ROS"},
-#     {"lugar": "Salta" , "codigo": "SLA"},
-#     {"lugar": "Trelew" , "codigo": "REL"},
-#     {"lugar": "Tucumán" , "codigo": "TUC"},
-#     {"lugar": "Ushuaia" , "codigo": "USH"},
-#     {"lugar": "Viedma" , "codigo": "VDM"}
-#     ]
 
-destinos_argentina = [
-    {"lugar": "San Martín de los Andes" , "codigo": "CPC"},
-    {"lugar": "Bariloche" , "codigo": "BRC"},
-    {"lugar": "Calafate" , "codigo": "FTE"},
-    {"lugar": "Cordoba" , "codigo": "COR"},
-    {"lugar": "Esquel" , "codigo": "EQS"},
-    {"lugar": "Rio Gallegos" , "codigo": "RGL"},
-    {"lugar": "Rio Grande" , "codigo": "RGA"},
-    {"lugar": "Rio Hondo" , "codigo": "RHD"},
-    {"lugar": "Puerto Iguazu" , "codigo": "IGR"},
-    {"lugar": "Puerto Madryn" , "codigo": "PMY"},
-    {"lugar": "Malargue" , "codigo": "LGS"},
-    {"lugar": "Mendoza" , "codigo": "MDZ"},
-    {"lugar": "Neuquen" , "codigo": "NQN"},
-    {"lugar": "Posadas" , "codigo": "PSS"},
-    {"lugar": "San Rafael" , "codigo": "AFA"},
-    {"lugar": "Trelew" , "codigo": "REL"},
-    {"lugar": "Ushuaia" , "codigo": "USH"},
-    {"lugar": "Viedma" , "codigo": "VDM"}
-    ]
-
-destinos_españa = [
-    {"lugar": "Alicante", "codigo": "ALC"},
-    {"lugar": "Asturias", "codigo": "OVD"},
-    {"lugar": "Barcelona", "codigo": "BCN"},
-    {"lugar": "Bilbao", "codigo": "BIO"},
-    {"lugar": "Canarias", "codigo": "LPA"},
-    {"lugar": "Coruna", "codigo": "LCG"},
-    {"lugar": "Mallorca", "codigo": "PMI"},
-    {"lugar": "Fuerteventura", "codigo": "FUE"},
-    {"lugar": "Ibiza", "codigo": "IBZ"},
-    {"lugar": "Lanzarote", "codigo": "ACE"},
-    {"lugar": "Madrid", "codigo": "MAD"},
-    {"lugar": "Mahon", "codigo": "MAH"},
-    {"lugar": "Malaga", "codigo": "AGP"},
-    {"lugar": "Sevilla", "codigo": "SVQ"},
-    {"lugar": "Tenerife sur", "codigo": "TFS"},
-    {"lugar": "Tenerife 2", "codigo": "TFN"},
-    {"lugar": "Tenerife 3", "codigo": "TCI"},
-    {"lugar": "Valencia", "codigo": "VLC"},
-    {"lugar": "Vigo", "codigo": "VGO"}
-]
+input_origen_id = "suggestion-input-sb-origin"
+input_destino_id = "suggestion-input-sb-destination"
 
 cantidad_meses_disponibles = 0
-
+aeropuerto_origen = "BUE"
+aeropuerto_destino = "TCI"
+lugar = "Tenerife"
+iteracion = 0
 precios = []
 
 
@@ -117,20 +39,33 @@ def abrir_pagina():
 
 
 def setear_tramo_ida():
+    time.sleep(1)
     input_tramo_ida = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "radio-sbf-from")))
     input_tramo_ida.click()
 
 
 
-def setear_aeropuertos(aeropuerto, input_id):
-    input_aeropuerto = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, input_id)))
-    input_aeropuerto.send_keys(aeropuerto)
-    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "react-autosuggest__suggestions-list")))
-    opciones_origen = WebDriverWait(driver, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, "li")))
-    for opcion in opciones_origen:
-        if aeropuerto in opcion.text:
-            opcion.click()
-            break
+def setear_aeropuertos():
+    input_origen = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, input_origen_id)))
+    input_destino = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, input_destino_id)))    
+
+    if input_origen.get_attribute("value") == "":
+        input_origen.send_keys(aeropuerto_origen)
+        lista_opciones = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "react-autosuggest__suggestions-list")))
+        opciones = WebDriverWait(lista_opciones, 5).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "react-autosuggest__suggestion")))
+        for opcion in opciones:
+            if aeropuerto_origen in opcion.text:
+                opcion.click()
+                break
+    
+    if input_destino.get_attribute("value") == "":
+        input_destino.send_keys(aeropuerto_destino)
+        lista_opciones = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "react-autosuggest__suggestions-list")))
+        opciones = WebDriverWait(lista_opciones, 5).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "react-autosuggest__suggestion")))
+        for opcion in opciones:
+            if aeropuerto_destino in opcion.text:
+                opcion.click()
+                break
 
 
 
@@ -147,7 +82,7 @@ def setear_fecha():
             if dia.get_attribute("aria-disabled") == "false":
                 dia.click()
                 break
-
+    
 
 
 def click_buscar():
@@ -194,8 +129,37 @@ def esperar_data():
 
 
 
-def obtener_precios(destino):
+def detectar_pagina_oops():
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "oops-title")))
+    boton_inicio = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "button-oops-back")))
+    boton_inicio.click()
+    buscar_despues_de_pagina_oops()
+
+
+
+def buscar_despues_de_pagina_oops():
+    global iteracion
+
+    print(iteracion)
+    iteracion += 1
+    setear_tramo_ida()
+    setear_aeropuertos()
+    abrir_calendario()
+    for i in range(iteracion):
+        elegir_siguiente_mes()
+    setear_fecha()
+    time.sleep(1)
+    click_buscar()
+    esperar_data()
+    obtener_precios()
+    while iteracion < len(cantidad_meses_disponibles):
+        break
+
+
+
+def obtener_precios():
     global precios
+    global iteracion
 
     try:
         WebDriverWait(driver, 0.5).until(EC.presence_of_element_located((By.ID, "fdc-from-box")))
@@ -210,19 +174,23 @@ def obtener_precios(destino):
                 "dia": dia,
                 "mes": mes,
                 "anio": anio,
-                "destino": destino,
+                "destino": lugar,
                 "precio": precio
             }
             precios.append(obj_oferta)
+            iteracion += 1
     except:
-        WebDriverWait(driver, 0.5).until(EC.text_to_be_present_in_element((By.CLASS_NAME, "styled__UnavailableFlightDateErrorContainer-sc-1sduzq6-3"), "No tenemos vuelos disponibles"))
-        print("no hay vuelos")
+        try:
+            WebDriverWait(driver, 0.5).until(EC.text_to_be_present_in_element((By.CLASS_NAME, "styled__UnavailableFlightDateErrorContainer-sc-1sduzq6-3"), "No tenemos vuelos disponibles"))
+            print("no hay vuelos")
+        except:
+            detectar_pagina_oops()
 
 
 
 def abrir_editar_busqueda():
     try:
-        button_editar_busqueda = WebDriverWait(driver, 0.5).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
+        button_editar_busqueda = WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.ID, "button-edit-search")))
         button_editar_busqueda.click()
     except:
         pass
@@ -230,26 +198,27 @@ def abrir_editar_busqueda():
 
 
 def elegir_siguiente_mes():
-    flecha_siguiente = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "next-button")))
-    flecha_siguiente.click()
+    try:
+        WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "next-button"))).click()
+    except:
+        WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "next-button"))).click()
 
 
 
-def buscar_resto_del_anio(destino):
+def buscar_meses_siguientes():
     i=1
     while i<cantidad_meses_disponibles:
         abrir_editar_busqueda()
         setear_tramo_ida()
+        setear_aeropuertos()
         abrir_calendario()
         elegir_siguiente_mes()
         setear_fecha()
         click_buscar()
         esperar_data()
-        obtener_precios(destino)
+        obtener_precios()
         i+=1
     
-    
-
 
 
 def mostrar_resultados():
@@ -260,29 +229,31 @@ def mostrar_resultados():
 
 def guardar_vuelos():
     precios_ordenados = sorted(precios, key=lambda d: d['precio'])
-    vuelos = open("vuelos", 'w')
-    vuelos.write(str(precios_ordenados))
+    vuelos = open("vuelos.txt", 'w')
+    vuelos.write(str(precios_ordenados).replace("}, ", "}\n").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", ""))
 
 
 
-def scraping_aerolineas(aeropuerto_origen, aeropuerto_destino, destino):
+def scraping_aerolineas():
     abrir_pagina()
     setear_tramo_ida()
-    if cantidad_meses_disponibles == 0:
-        calcular_meses_disponibles()
-        reiniciar_calendario()
-    setear_aeropuertos(aeropuerto_origen, "suggestion-input-sb-origin")
-    setear_aeropuertos(aeropuerto_destino, "suggestion-input-sb-destination")
+    calcular_meses_disponibles()
+    reiniciar_calendario()
+    setear_aeropuertos()
     abrir_calendario()
     setear_fecha()
     click_buscar()
     esperar_data()
-    obtener_precios(destino)
-    buscar_resto_del_anio(destino)
+    obtener_precios()
+    buscar_meses_siguientes()
 
-for destino in destinos_españa:
-    scraping_aerolineas("BUE", destino["codigo"], destino["lugar"])
 
-# scraping_aerolineas("BUE", "IGR", "Iguazu")
+
+# for destino in destinos_argentina_filtrados:
+#     aeropuerto_destino = destino["codigo"]
+#     lugar = destino["lugar"]
+#     scraping_aerolineas()
+
+scraping_aerolineas()
 
 guardar_vuelos()
